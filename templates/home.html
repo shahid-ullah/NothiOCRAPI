@@ -1,0 +1,68 @@
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+    <title>ocr</title>
+
+  
+</head>
+<body style="background-image: url('media/images/bg.jpg')">
+<div class="container bg-light p-5 ">
+<section id="current_image" class="m-2">
+    
+        <h2 class="bg-info text-white text-center p-3 mb-2" >Multilingual Optical Charecter Recognition</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button id="upload" class="btn btn-primary" type="submit">Upload Image</button>
+            <button id="test" class="btn btn-info" style="display: none;" >Process Image</button>
+        </form>
+        
+        
+    
+</section>
+{% if up_msg %}
+<section id="all_img">
+<div class="read " >
+   
+<div class="row">
+
+
+     <div class="col-md-6">
+         
+         <img class="img-fluid" src="../media/{{current_img.image}}">
+     </div>
+     <div class="col-md-6">
+         <textarea id="" name="" rows="18" cols="35">
+            {{current_img.text}}
+            </textarea>
+     </div>
+
+     
+
+</div>
+</div>
+    
+</section>
+{% endif %}
+
+
+</div>
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+</script>
+
+</body>
+</html>
+
+
+

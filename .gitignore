@@ -1,0 +1,5 @@
+.venv
+.vim
+db.sqlite3
+tags
+media
