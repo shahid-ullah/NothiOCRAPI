@@ -1,6 +1,7 @@
 ### Server Installation Instructions
 
 1. Clone the proejct
+    1. Command: git clone https://github.com/shahid-ullah/NothiOCRAPI.git
 1.  $ cd NothiOCRApi
 1. create a virtual environment
     1. command: $ virtualenv venv
