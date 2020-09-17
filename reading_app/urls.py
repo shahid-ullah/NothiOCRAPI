@@ -4,6 +4,6 @@ from django.urls import path,include
 
 urlpatterns = [
 
-    path('',read_view,name="reading_img"),
+    # path('',read_view,name="reading_img"),
     path('NothiOCRApi/', OCRAPIView.as_view(), name="api")
 ]
