@@ -21,4 +21,4 @@
 3. Provide form data as key value
     * Example: image: image_url, language: eng
 4. key name must be image and language (fixed)
-5. language key may be three types (such as eng/ben/ben+eng)
+5. language value may be three types (such as eng/ben/ben+eng)
