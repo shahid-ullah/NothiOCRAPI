@@ -1,11 +1,13 @@
 ### Server Installation Instructions
 
-1. First create a virtual environment
+1. Clone the proejct
+1.  $ cd NothiOCRApi
+1. create a virtual environment
     1. command: $ virtualenv venv
 2. Activate Virtual Environment
     1. Command: $ source venv/bin/activate
-3. Second Install packages in Virtual Environment
-    1. Command: $ pip install -r requirements.txt
+3. Install packages in Virtual Environment
+    1. Command: $ pip install -r requirements.txt --no-cache-dir
 4. Install Additional language ocr data
     1. $ sudo apt install tesseract-ocr-ben
     2. $ sudo apt install tesseract-ocr-eng
