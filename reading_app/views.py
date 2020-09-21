@@ -4,7 +4,7 @@
 import sys
 
 # third-party import
-import cv2
+# import cv2
 import imageio
 import pytesseract as tess
 from django.http import HttpResponse
