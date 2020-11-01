@@ -19,7 +19,8 @@ from django.urls import path, include # new
 from django.conf.urls.static import static # new
 urlpatterns = [
     path('admin12djfdj@#$%/', admin.site.urls),
-    path('',include('reading_app.urls'))
+    path('',include('reading_app.urls')),
+    path('apiHCR/',include('digit_recognizer.urls'))
 ]
 if settings.DEBUG: # new
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

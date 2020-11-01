@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # local apps
     'reading_app',
+    'digit_recognizer.apps.DigitRecognizerConfig'
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+MODELS = BASE_DIR / 'digit_recognizer/trained_models'
 
 # settings for deployment
 # DEBUG = False
