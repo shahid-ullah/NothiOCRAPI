@@ -13,7 +13,7 @@ from django.urls import reverse_lazy
 from PIL import Image
 from rest_framework import generics, status
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
-from rest_framework.renderers import JSONRenderer
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -57,7 +57,7 @@ class OCRAPIView(APIView):
     API: Return Image to text
     """
     parser_classes = [JSONParser, FormParser, MultiPartParser,]
-    renderer_classes = [JSONRenderer,]
+    renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
 
     def post(self, request, *args, **kwargs):
         serializer = UploadImageSerializer(data=request.data)
