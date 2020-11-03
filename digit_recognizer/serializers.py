@@ -4,11 +4,11 @@
 from drf_base64.serializers import ModelSerializer
 
 # local import
-from .models import UploadImage
+from .models import StoreImageForHCR
 
 
 class UploadImageSerializer(ModelSerializer):
 
     class Meta:
-        model = UploadImage
+        model = StoreImageForHCR
         fields = ['image',]

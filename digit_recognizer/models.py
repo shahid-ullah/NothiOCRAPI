@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 # model for api
-class UploadImage(models.Model):
+class StoreImageForHCR(models.Model):
     """
     Store API reuested image and Image Text
     """
