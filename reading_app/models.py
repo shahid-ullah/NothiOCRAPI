@@ -10,7 +10,7 @@ class ImageUpload(models.Model):
         ('eng','English'),
         ('ben+eng','Bangla & English')
     )
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='images_ocr_web/')
     text =models.TextField()
     created=models.DateTimeField(auto_now_add=True)
     # language=models.CharField(max_length=20,choices=lang_choice,default='bangla')
@@ -29,7 +29,7 @@ class UploadImage(models.Model):
         ('eng','English'),
         ('ben+eng','Bangla & English')
     )
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='images_ocr_api/')
     text =models.TextField(null=True, blank=True)
     created=models.DateTimeField(auto_now_add=True)
     language=models.CharField(max_length=20,choices=lang_choice,default='ben')
