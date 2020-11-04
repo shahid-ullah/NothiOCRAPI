@@ -79,6 +79,6 @@ def image_to_digits(image_path):
     return predicted_result
         
 
-    print(predicted_result)
+    # print(predicted_result)
 
 
