@@ -13,10 +13,9 @@ from django.urls import reverse_lazy
 from PIL import Image
 from rest_framework import generics, status
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
 
 # local import
 from .forms import ImageUploadForm
@@ -60,14 +59,15 @@ class OCRAPIView(APIView):
     renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
 
     def post(self, request, *args, **kwargs):
+        # breakpoint()
         serializer = UploadImageSerializer(data=request.data)
 
         if serializer.is_valid():
-            instance = serializer.save()
-            # Defining response dictionay
-            response = {}
-            image_path = instance.image.path
             try:
+                instance = serializer.save()
+                # Defining response dictionay
+                response = {}
+                image_path = instance.image.path
                 image_object = Image.open(image_path)
                 text=tess.image_to_string(image_object ,instance.language)
                 response['text'] = str(text)
