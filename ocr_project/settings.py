@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 
     # third party apps
@@ -129,6 +130,8 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -140,5 +143,4 @@ MODELS = BASE_DIR / 'digit_recognizer/trained_models'
 DEBUG = False
 ALLOWED_HOSTS = ['*']
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 SECRET_KEY = os.environ.get('SECRET_KEY', 'q(8ge8q9%)&g7dee6z4&!ui!wb!&b(bqr_#4+j)h+-@pt$du)o')
