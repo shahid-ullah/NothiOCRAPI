@@ -24,39 +24,56 @@ from .serializers import UploadImageSerializer
 
 
 def read_view(request):
-    form=ImageUploadForm()
-    text=None
-    instance=None
-    all_data=None
-    language='ben'
-    upload_msg=None
+    form = ImageUploadForm()
+    text = None
+    instance = None
+    all_data = None
+    language = 'ben'
+    upload_msg = None
     if request.method == 'POST':
-        form=ImageUploadForm(request.POST, request.FILES)
+        form = ImageUploadForm(request.POST, request.FILES)
 
         if form.is_valid():
-           data = form.save()
-           path = data.image
-           all_data = ImageUpload.objects.all()
-           instance=ImageUpload.objects.get(id=data.id)
-           update_path = instance.image.path
-           img=Image.open(update_path)
-           language=request.POST.get('language')
-           print(language)
-           text=tess.image_to_string(img,lang=language)
-           instance.text=text
-           instance.save()
-           upload_msg=1
+            data = form.save()
+            path = data.image
+            all_data = ImageUpload.objects.all()
+            instance = ImageUpload.objects.get(id=data.id)
+            update_path = instance.image.path
+            img = Image.open(update_path)
+            language = request.POST.get('language')
+            print(language)
+            text = tess.image_to_string(img, lang=language)
+            instance.text = text
+            instance.save()
+            upload_msg = 1
 
-
-    return render(request,'home.html',{'form':form,'text':text,'current_img':instance,'all_img':all_data,'up_msg':upload_msg})
+    return render(
+        request,
+        'home.html',
+        {
+            'form': form,
+            'text': text,
+            'current_img': instance,
+            'all_img': all_data,
+            'up_msg': upload_msg,
+        },
+    )
 
 
 class OCRAPIView(APIView):
     """
     API: Return Image to text
     """
-    parser_classes = [JSONParser, FormParser, MultiPartParser,]
-    renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
+
+    parser_classes = [
+        JSONParser,
+        FormParser,
+        MultiPartParser,
+    ]
+    renderer_classes = [
+        JSONRenderer,
+        BrowsableAPIRenderer,
+    ]
 
     def post(self, request, *args, **kwargs):
         # breakpoint()
@@ -69,11 +86,11 @@ class OCRAPIView(APIView):
                 response = {}
                 image_path = instance.image.path
                 image_object = Image.open(image_path)
-                text=tess.image_to_string(image_object ,instance.language)
+                text = tess.image_to_string(image_object, instance.language)
                 response['text'] = str(text)
                 instance.text = str(text)
                 instance.save()
-            except :
+            except:
                 the_type, the_value, the_traceback = sys.exc_info()
                 response['error'] = str(the_value)
                 instance.text = str(the_value)

@@ -8,7 +8,8 @@ from .models import StoreImageForHCR
 
 
 class UploadImageSerializer(ModelSerializer):
-
     class Meta:
         model = StoreImageForHCR
-        fields = ['image',]
+        fields = [
+            'image',
+        ]

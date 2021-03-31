@@ -46,7 +46,8 @@ INSTALLED_APPS = [
 
     # local apps
     'reading_app',
-    'digit_recognizer.apps.DigitRecognizerConfig'
+    'digit_recognizer.apps.DigitRecognizerConfig',
+    'single_digit_canvas.apps.SingleDigitCanvasConfig',
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MODELS = BASE_DIR / 'digit_recognizer/trained_models'
+SINGLE_DIGIT_CANVAS_MODEL = BASE_DIR / 'single_digit_canvas/ml_models'
 
 # settings for deployment
 DEBUG = False
