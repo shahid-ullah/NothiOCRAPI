@@ -1,4 +1,6 @@
 # from django.shortcuts import render
+import sys
+
 import cv2
 import numpy as np
 from keras.preprocessing.image import img_to_array, load_img
@@ -26,23 +28,28 @@ class SingleDigitCanvasAPI(APIView):
     def post(self, request, *args, **kwargs):
         model = SingleDigitCanvasConfig.model
         serializer = SingleDigitCanvasModelSerializer(data=request.data)
-        # res = {}
+        res = {}
         if serializer.is_valid():
-            instance = serializer.save()
-            path = instance.image.path
-            image = cv2.imread(path)
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            gray_new = gray[70:-70, :]
-            gray_new = cv2.bitwise_not(gray_new)
-            cv2.imwrite("test.jpg", gray_new)
-            image_path_test = 'test.jpg'
-            test_img = load_img(image_path_test, target_size=(50, 50))
-            t = []
-            test_img = img_to_array(test_img)
-            t.append(test_img)
-            test_img = np.array(t)
-            predictions = model.predict(test_img[:])
-            predict = np.argmax(predictions, axis=1)
-            return Response({f'digit: {predict}'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                instance = serializer.save()
+                path = instance.image.path
+                image = cv2.imread(path)
+                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                gray_new = gray[70:-70, :]
+                gray_new = cv2.bitwise_not(gray_new)
+                cv2.imwrite("test.jpg", gray_new)
+                image_path_test = 'test.jpg'
+                test_img = load_img(image_path_test, target_size=(50, 50))
+                t = []
+                test_img = img_to_array(test_img)
+                t.append(test_img)
+                test_img = np.array(t)
+                predictions = model.predict(test_img[:])
+                predict = np.argmax(predictions, axis=1)
+            except:
+                the_type, the_value, the_traceback = sys.exc_info()
+                res['error'] = str(the_value)
+                return Response(res, status=status.HTTP_400_BAD_REQUEST)
+            return Response({f'digit: {predict}'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
