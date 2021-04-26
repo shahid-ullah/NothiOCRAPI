@@ -1,10 +1,8 @@
 # single_digit_canvas/urls.py
 from django.urls import path
 
-from .views import SingleDigitCanvasAPI
+from .views import NurazDigitCanvasAPI
 
 urlpatterns = [
-    # path('',read_view,name="reading_img"),
-    # path('NothiOCRApi/', OCRAPIView.as_view(), name="api")
-    path('', SingleDigitCanvasAPI.as_view(), name="single_digit_canvas")
+    path('', NurazDigitCanvasAPI.as_view(), name="nuraz_digit_canvas")
 ]
