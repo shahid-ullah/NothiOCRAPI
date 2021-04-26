@@ -33,7 +33,6 @@ imageio==2.8.0
 imutils==0.5.3
 incf.countryutils==1.0
 ipykernel==5.3.4
-ipython==7.17.0
 ipython-genutils==0.2.0
 isort==5.5.2
 jedi==0.17.2
