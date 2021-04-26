@@ -1,78 +1,48 @@
-import argparse
-import glob
-import os
-
+# digit_recognizer/test_model.py
 import cv2
-import imutils
-import matplotlib.gridspec as gridspec
-import matplotlib.pyplot as plt
 import numpy as np
-from keras.applications import MobileNetV2
-from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.layers import (AveragePooling2D, Dense, Dropout, Flatten, Input,
-                          MaxPool2D)
-from keras.models import Model, load_model, model_from_json
-from keras.optimizers import Adam
-from keras.preprocessing.image import (ImageDataGenerator, img_to_array,
-                                       load_img)
-from keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from imutils import contours
+from keras.preprocessing.image import img_to_array, load_img
 
 from .apps import DigitRecognizerConfig
 
 
 def image_to_digits(image_path):
     image = cv2.imread(image_path)
-    image = imutils.resize(image, width=320)
+
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-    blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
-
-    _, thresh = cv2.threshold(blackhat, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-
-    def get_contour_precedence(contour, cols):
-        tolerance_factor = 100
-        origin = cv2.boundingRect(contour)
-        return (origin[1] // tolerance_factor) * tolerance_factor * cols + origin[0]
-
-    (cnts, _) = cv2.findContours(
-        thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    _, thresh = cv2.threshold(gray, 70, 255, cv2.THRESH_BINARY_INV)
+    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 3))
+    dilated = cv2.dilate(thresh, kernel, iterations=4)
+    cnts, hierarchy = cv2.findContours(
+        dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
     )
-    cnts.sort(key=lambda cnts: get_contour_precedence(cnts, thresh.shape[1]))
-    avgCntArea = np.mean([cv2.contourArea(k) for k in cnts])
-    digits = []
-    boxes = []
+    cnts, _ = contours.sort_contours(cnts, method="left-to-right")
 
-    # model=load_model('abcde.h5')
-
-    predicted_result = []
     Roi_number = 0
-    for (i, c) in enumerate(cnts):
-        if cv2.contourArea(c) < avgCntArea / 10:
-            continue
+    for contour in cnts:
         mask = np.zeros(gray.shape, dtype="uint8")
 
-        (x, y, w, h) = cv2.boundingRect(c)
-        hull = cv2.convexHull(c)
+        (x, y, w, h) = cv2.boundingRect(contour)
+        hull = cv2.convexHull(contour)
         cv2.drawContours(mask, [hull], -1, 255, -1)
         mask = cv2.bitwise_and(thresh, thresh, mask=mask)
-        digit = mask[y - 8 : y + h + 8, x - 8 : x + w + 8]
-        #     digit = cv2.resize(digit,(28,28))
-        ROI = mask[y : y + h, x : x + w + 10]
-        # ROI=ROI.reshape(1,20,20,1)
-        # print(ROI.shape)
-        dim = (20, 20)
-        resized = cv2.resize(ROI, dim, interpolation=cv2.INTER_AREA)
-        resized = resized.reshape(1, 20, 20, 1)
-        # predictions=model.predict(resized[:2])
-        predictions = DigitRecognizerConfig.model_HDR.predict(resized[:2])
-        f_predictions = np.argmax(predictions, axis=1)
-        f_predictions = f_predictions[0]
-        predicted_result.append(f_predictions)
+        ROI = mask[y : y + h, x : x + w]
+
+        cv2.imwrite('roi/ROI_{}.png'.format(Roi_number), ROI)
         Roi_number += 1
 
-    return predicted_result
+    prediction = []
+    # model = load_model('nuraz_single_canvas_50.h5')
+    model = DigitRecognizerConfig.model_HCR
+    for i in range(0, Roi_number):
+        image_path_test = 'roi/ROI_{}.png'.format(i)
+        test_img = load_img(image_path_test, target_size=(50, 50))
+        t = []
+        test_img = img_to_array(test_img)
+        t.append(test_img)
+        test_img = np.array(t)
+        predictions = model.predict(test_img[:])
+        prediction.append(np.argmax(predictions, axis=1)[0])
 
-    # print(predicted_result)
+    return prediction

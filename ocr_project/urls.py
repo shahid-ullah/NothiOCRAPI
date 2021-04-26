@@ -1,18 +1,4 @@
-"""ocr_project URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+# ocr_project/urls.py
 from django.conf import settings  # new
 from django.conf.urls.static import static  # new
 from django.contrib import admin
@@ -20,8 +6,8 @@ from django.urls import include, path  # new
 
 urlpatterns = [
     path('admin12djfdj@#$%/', admin.site.urls),
-    path('', include('reading_app.urls')),
-    path('', include('single_digit_canvas.urls')),
+    path('apiImageToText/', include('reading_app.urls')),
+    path('apiSingleDigitCanvas/', include('single_digit_canvas.urls')),
     path('apiHCR/', include('digit_recognizer.urls')),
 ]
 if settings.DEBUG:  # new

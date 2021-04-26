@@ -1,6 +1,8 @@
-from .views import DigitRecognizerView
+# digit_recognizer/urls.py
 from django.urls import path
 
+from .views import DigitRecognizerAPI
+
 urlpatterns = [
-    path('', DigitRecognizerView.as_view(), name="api")
+    path('', DigitRecognizerAPI.as_view(), name="api"),
 ]

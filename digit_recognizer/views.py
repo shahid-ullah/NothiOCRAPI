@@ -1,11 +1,9 @@
+# digit_recognizer/views.py
 import sys
 
-from django.shortcuts import render
-from PIL import Image
 from rest_framework import status
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
-from rest_framework.renderers import (BrowsableAPIRenderer,
-                                      JSONOpenAPIRenderer, JSONRenderer)
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,8 +11,7 @@ from .serializers import UploadImageSerializer
 from .test_model import image_to_digits
 
 
-# Create your views here.
-class DigitRecognizerView(APIView):
+class DigitRecognizerAPI(APIView):
     """
     API: Return Image to digit/digits
     """
@@ -37,7 +34,7 @@ class DigitRecognizerView(APIView):
             try:
                 prediction = image_to_digits(image_path)
                 response['digits'] = str(prediction)
-            except:
+            except Exception as e:
                 the_type, the_value, the_traceback = sys.exc_info()
                 response['error'] = str(the_value)
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
