@@ -39,6 +39,6 @@ class NurazDigitCanvasAPI(APIView):
                 the_type, the_value, the_traceback = sys.exc_info()
                 response['error'] = str(the_value)
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
-            return Response({f'digit: {prediction}'}, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
