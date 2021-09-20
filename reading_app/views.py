@@ -55,6 +55,7 @@ def I2TNID(request):
                 not_matching_object, response = extract_nid_info(str(text))
             except Exception as e:
                 response = ""
+                breakpoint()
                 return HttpResponseBadRequest()
             return render(
                 request,
@@ -113,94 +114,94 @@ def extract_nid_info(text):
 
     not_matching_object = 0
     # Search Text
-    header1_mo = header1_regex.search(text)
-    if header1_mo:
+    try:
+        header1_mo = header1_regex.search(text)
         header1 = header1_mo.group()
-    else:
+    except:
         header1 = ''
         not_matching_object += 1
 
-    header2_mo = header2_regex.search(text)
-    if header1_mo:
+    try:
+        header2_mo = header2_regex.search(text)
         header2 = header2_mo.group()
-    else:
+    except:
         header2 = ''
         not_matching_object += 1
 
-    header3_mo = header3_regex.search(text)
-    if header3_mo:
+    try:
+        header3_mo = header3_regex.search(text)
         header3 = header3_mo.group()
-    else:
+    except:
         header3 = ''
         not_matching_object += 1
 
-    name_bng_mo = name_bng_regex.search(text)
-    if name_bng_mo:
+    try:
+        name_bng_mo = name_bng_regex.search(text)
         name_bng = name_bng_mo.group()
-    else:
+    except:
         name_bng = ''
         not_matching_object += 1
 
-    name_eng_mo = name_eng_regex.search(text)
-    if name_eng_mo:
+    try:
+        name_eng_mo = name_eng_regex.search(text)
         name_eng = name_eng_mo.group()
-    else:
+    except:
         name_eng = ''
         not_matching_object += 1
 
-    father_name_mo = father_name_regx.search(text)
-    if father_name_mo:
+    try:
+        father_name_mo = father_name_regx.search(text)
         father_name = father_name_mo.group()
-    else:
+    except:
         father_name = ''
         not_matching_object += 1
 
-    mother_name_mo = mother_name_regx.search(text)
-    if mother_name_mo:
+    try:
+        mother_name_mo = mother_name_regx.search(text)
         mother_name = mother_name_mo.group()
-    else:
+    except:
         mother_name = ''
         not_matching_object += 1
 
-    date_of_birth_mo = date_of_birth_regex.search(text)
-    if date_of_birth_mo:
+    try:
+        date_of_birth_mo = date_of_birth_regex.search(text)
         date_of_birth = date_of_birth_mo.group()
-    else:
+    except:
         date_of_birth = ''
         not_matching_object += 1
 
-    id_no_mo = id_no_regex.search(text)
-    if id_no_mo:
+    try:
+        id_no_mo = id_no_regex.search(text)
         id_no = id_no_mo.group()
-    else:
+    except:
         id_no = ''
         not_matching_object += 1
 
-    footer1_mo = footer1_regex.search(text)
-    if footer1_mo:
+    try:
+        footer1_mo = footer1_regex.search(text)
         footer1 = footer1_mo.group()
-    else:
+    except:
         footer1 = ''
         not_matching_object += 1
 
-    footer2_mo = footer2_regex.search(text)
-    if footer2_mo:
+    try:
+        footer2_mo = footer2_regex.search(text)
         footer2 = footer2_mo.group()
-    else:
+    except:
         footer2 = ''
         not_matching_object += 1
 
-    footer3_mo = footer3_regex.search(text)
-    if footer3_mo:
+    try:
+        footer3_mo = footer3_regex.search(text)
         footer3 = footer3_mo.group()
-    else:
+    except:
         footer3 = ''
         not_matching_object += 1
 
-    footer4_mo = footer4_regex.search(text)
-    if footer4_mo:
+    try:
+        footer4_mo = footer4_regex.search(text)
         footer4 = footer4_mo.group()
-    else:
+    except:
         footer4 = ''
         not_matching_object += 1
 
