@@ -1,8 +1,10 @@
 from django import forms
-from .models import ImageUpload
-class ImageUploadForm(forms.ModelForm):
 
+from .models import ImageUpload
+
+
+class ImageUploadForm(forms.ModelForm):
     class Meta:
         model = ImageUpload
         # fields = ['image']
-        fields =['language','image']
+        fields = ['language', 'image']
