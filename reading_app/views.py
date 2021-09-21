@@ -55,7 +55,6 @@ def I2TNID(request):
                 not_matching_object, response = extract_nid_info(str(text))
             except Exception as e:
                 response = ""
-                breakpoint()
                 return HttpResponseBadRequest()
             return render(
                 request,
