@@ -37,9 +37,9 @@ footer3_regex = re.compile(r'ঠিকানা(.*)')
 footer4_regex = re.compile(r'ঢাকা(.*)')
 
 
-def I2TNID(request):
+def I2TNIDWeb(request):
     """
-    NID Image to Text Converter.
+    NID Image to Text online Converter.
     """
     if request.method == "GET":
         form = ImageUploadForm(initial={'language': 'ben+eng'})
@@ -68,45 +68,6 @@ def I2TNID(request):
             )
 
     return render(request, 'i2tnid.html', context={'form': form, 'display': False})
-
-
-class OCRAPIView(APIView):
-    """
-    API: Return Image to text
-    """
-
-    parser_classes = [
-        JSONParser,
-        FormParser,
-        MultiPartParser,
-    ]
-    renderer_classes = [
-        JSONRenderer,
-        BrowsableAPIRenderer,
-    ]
-
-    def post(self, request, *args, **kwargs):
-        # breakpoint()
-        serializer = UploadImageSerializer(data=request.data)
-        response = {}
-
-        if serializer.is_valid():
-            instance = serializer.save()
-            try:
-                image_path = instance.image.path
-                image_object = Image.open(image_path)
-                text = tess.image_to_string(image_object, instance.language)
-                response['text'] = str(text)
-                instance.save()
-            except Exception as e:
-                response['error'] = str(e)
-                instance.text = str(e)
-                instance.save()
-                return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
-            return Response(response, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def extract_nid_info(text):
@@ -221,6 +182,85 @@ def extract_nid_info(text):
     }
 
     return not_matching_object, dic
+
+
+class OCRAPIView(APIView):
+    """
+    API: Return Image to text
+    """
+
+    parser_classes = [
+        JSONParser,
+        FormParser,
+        MultiPartParser,
+    ]
+    renderer_classes = [
+        JSONRenderer,
+        BrowsableAPIRenderer,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        serializer = UploadImageSerializer(data=request.data)
+        response = {}
+
+        if serializer.is_valid():
+            instance = serializer.save()
+            try:
+                image_path = instance.image.path
+                image_object = Image.open(image_path)
+                text = tess.image_to_string(image_object, instance.language)
+                response['text'] = str(text)
+                instance.text = str(text)
+                instance.save()
+            except Exception as e:
+                response['error'] = str(e)
+                instance.text = str(e)
+                instance.save()
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class I2TNIDAPI(APIView):
+    """
+    API: Return NID Image to text
+    """
+
+    parser_classes = [
+        JSONParser,
+        FormParser,
+        MultiPartParser,
+    ]
+    renderer_classes = [
+        JSONRenderer,
+        BrowsableAPIRenderer,
+    ]
+
+    def post(self, request, *args, **kwargs):
+        serializer = UploadImageSerializer(data=request.data)
+        response = {}
+
+        if serializer.is_valid():
+            instance = serializer.save()
+            try:
+                image_path = instance.image.path
+                image_object = Image.open(image_path)
+                text = tess.image_to_string(image_object, instance.language)
+                not_matching_object, res = extract_nid_info(str(text))
+                instance.text = res
+                instance.save()
+                response['text'] = res
+            except Exception as e:
+                response['error'] = str(e)
+                instance.text = str(e)
+                instance.save()
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # def read_view(request):
