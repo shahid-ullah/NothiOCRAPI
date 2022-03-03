@@ -8,6 +8,7 @@ db.sqlite3
 local_settings.py
 media
 staticfiles
+worktree/
 
 # Flask stuff
 instance/
