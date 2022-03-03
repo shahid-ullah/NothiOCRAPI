@@ -52,6 +52,16 @@ def image_to_digit(image_path):
         t.append(test_img)
         test_img = np.array(t)
         predictions = model.predict(test_img[:])
-        prediction.append(np.argmax(predictions, axis=1)[0])
+        max = np.max(predictions)
+        max = float(max) * 100
+        max = "{:.2f}".format(max)
+
+        pred = np.argmax(predictions, axis=1)
+        pred = int(pred)
+
+        map = {'value': pred, 'accuracy': max}
+        prediction.append(map)
+
+        # prediction.append(np.argmax(predictions, axis=1)[0])
 
     return prediction
