@@ -59,7 +59,7 @@ class NID2TextAPI(APIView):
                 for line in result:
                     nid2text = nid2text + line[1][0].lower().replace(' ', '')
 
-                response['data']['nid2text'] = nid2text
+                response['data']['nid_to_text'] = nid2text
                 registration_pattern_groups = registration_pattern.findall(nid2text)
                 if registration_pattern_groups:
                     response['data']['registration']['status'] = 'ok'
