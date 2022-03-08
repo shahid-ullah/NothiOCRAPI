@@ -4,6 +4,7 @@ import re
 from paddleocr import PaddleOCR
 from rest_framework import status
 from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
@@ -18,9 +19,16 @@ birth_date_pattern = re.compile(r'\d\d\D\D\D\d\d\d\d')
 ocr = PaddleOCR(use_angle_cls=True, lang='en')
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
 class NIDcardStorageListAPI(ListAPIView):
     queryset = NIDCardStorageModel.objects.all()
     serializer_class = NIDCardStorageModelSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class NID2TextAPI(APIView):
