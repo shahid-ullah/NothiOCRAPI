@@ -12,6 +12,7 @@ env_file = os.path.join(BASE_DIR, ".env")
 environ.Env.read_env(env_file)
 
 SECRET_KEY = env('SECRET_KEY')
+# DEBUG = True
 
 
 ALLOWED_HOSTS = ['*']
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'reading_app',
     'digit_recognizer.apps.DigitRecognizerConfig',
     'single_digit_canvas.apps.SingleDigitCanvasConfig',
+    'nid2text.apps.Nid2TextConfig',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +125,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DIGIT_RECOGNIZER_MODEL = BASE_DIR / 'digit_recognizer/trained_models'
 SINGLE_DIGIT_CANVAS_MODEL = BASE_DIR / 'single_digit_canvas/ml_models'
+
+
+if not os.path.exists('nuraz/'):
+    os.mkdir('nuraz')
