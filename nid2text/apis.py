@@ -1,6 +1,7 @@
 # nid2text/apis.py
 import re
 
+import easyocr
 from paddleocr import PaddleOCR
 from rest_framework import status
 from rest_framework.generics import ListAPIView
@@ -15,8 +16,24 @@ from .serializers import NIDCardStorageModelSerializer
 
 registration_pattern = re.compile(r'\d+')
 birth_date_pattern = re.compile(r'\d\d\D\D\D\d\d\d\d')
+# birth_date_pattern = re.compile(r'\d\dd\d\d\d')
 
 ocr = PaddleOCR(use_angle_cls=True, lang='en')
+reader = easyocr.Reader(['en'])
+month_list = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+]
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -55,9 +72,13 @@ class NID2TextAPI(APIView):
             image_path = instance.image.path
             try:
                 nid2text = ''
-                result = ocr.ocr(image_path, cls=True)
+                # result = ocr.ocr(image_path, cls=True)
+                # for line in result:
+                #     nid2text = nid2text + line[1][0].lower().replace(' ', '')
+
+                result = reader.readtext(image_path)
                 for line in result:
-                    nid2text = nid2text + line[1][0].lower().replace(' ', '')
+                    nid2text = nid2text + line[1].lower().replace(' ', '')
 
                 response['data']['nid_to_text'] = nid2text
                 registration_pattern_groups = registration_pattern.findall(nid2text)
@@ -73,7 +94,13 @@ class NID2TextAPI(APIView):
                 birth_date_pattern_groups = birth_date_pattern.findall(nid2text)
 
                 if birth_date_pattern_groups:
-                    pattern = max(birth_date_pattern_groups, key=len)
+
+                    if len(birth_date_pattern_groups) > 1:
+                        for pat in birth_date_pattern_groups:
+                            if pat[2:5] in month_list:
+                                pattern = pat
+
+                    # pattern = max(birth_date_pattern_groups, key=len)
                     if len(pattern) == 9:
                         birth_day_map = {}
 
