@@ -20,7 +20,7 @@ registration_pattern = re.compile(r'\d{10,}')
 birth_date_pattern = re.compile(r'\d\d\D\D\D\d\d\d\d')
 
 ocr = PaddleOCR(use_angle_cls=True, lang='en')
-# reader = easyocr.Reader(['en'])
+reader = easyocr.Reader(['en'])
 month_list = [
     'jan',
     'feb',
@@ -36,7 +36,7 @@ month_list = [
     'dec',
 ]
 
-ID_CARD_LENGTH = [10, 13, 17]
+registration_number_length = [10, 13, 17]
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -77,29 +77,42 @@ class NID2TextAPI(APIView):
             arr = np.array(obj)
 
             try:
-                nid2text = ''
+                nid2text_easy_ocr = ''
                 nid2text_paddleocr = ''
 
-                result_paddleocr = ocr.ocr(arr, cls=True)
-                for line in result_paddleocr:
-                    nid2text_paddleocr = nid2text_paddleocr + line[1][
-                        0
-                    ].lower().replace(' ', '')
+                # result_paddleocr = ocr.ocr(arr, cls=True)
+                # for line in result_paddleocr:
+                #     nid2text_paddleocr = nid2text_paddleocr + line[1][
+                #         0
+                #     ].lower().replace(' ', '')
 
-                # result = reader.readtext(arr)
-                # for line in result:
-                #     nid2text = nid2text + line[1].lower().replace(' ', '')
+                result_easy_ocr = reader.readtext(arr)
+                for line in result_easy_ocr:
+                    nid2text_easy_ocr = nid2text_easy_ocr + line[1].lower().replace(
+                        ' ', ''
+                    )
 
                 # response['data']['nid_to_text'] = nid2text
                 response['data']['nid_to_text_paddle'] = nid2text_paddleocr
+                response['data']['nid_to_text_easy'] = nid2text_easy_ocr
 
+                # registration_pattern_groups = registration_pattern.findall(
+                #     nid2text_paddleocr
+                # )
+                # birth_date_pattern_groups = birth_date_pattern.findall(
+                #     nid2text_paddleocr
+                # )
                 registration_pattern_groups = registration_pattern.findall(
-                    nid2text_paddleocr
+                    nid2text_easy_ocr
                 )
+                birth_date_pattern_groups = birth_date_pattern.findall(
+                    nid2text_easy_ocr
+                )
+
                 if registration_pattern_groups:
                     pattern = ''
                     for pt in registration_pattern_groups:
-                        if len(pt) in ID_CARD_LENGTH:
+                        if len(pt) in registration_number_length:
                             pattern = pt
 
                     response['data']['registration']['status'] = 'ok'
@@ -107,10 +120,6 @@ class NID2TextAPI(APIView):
                 else:
                     response['data']['registration']['status'] = 'failed'
                     response['data']['registration']['data'] = {}
-
-                birth_date_pattern_groups = birth_date_pattern.findall(
-                    nid2text_paddleocr
-                )
 
                 if birth_date_pattern_groups:
 
