@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 
 import environ
+from rich import pretty
+
+pretty.install()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -12,7 +15,7 @@ env_file = os.path.join(BASE_DIR, ".env")
 environ.Env.read_env(env_file)
 
 SECRET_KEY = env('SECRET_KEY')
-# DEBUG = True
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['*']
