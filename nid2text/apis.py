@@ -36,7 +36,83 @@ month_list = [
     'dec',
 ]
 
-registration_number_length = [10, 13, 17]
+REGISTRATION_NUMBER_LENGTH = [10, 13, 17]
+
+
+def birth_day_paddleocr_search(image_array):
+    birthdate_map = {}
+    nid2text = ''
+    result_paddle_ocr = ocr.ocr(image_array, cls=True)
+    for line in result_paddle_ocr:
+        nid2text = nid2text + line[1][0].lower().replace(' ', '')
+
+    birth_date_pattern_groups = birth_date_pattern.findall(nid2text)
+
+    birthday = ''
+    for pat in birth_date_pattern_groups:
+        if pat[2:5] in month_list:
+            birthday = pat
+            break
+
+    if len(birthday) == 9:
+        birthdate_map = get_year_month_day(birthday)
+
+    return birthdate_map
+
+
+def get_registration_number_status(pattern_groups):
+    registration_number = ''
+    registration_status = 'failed'
+
+    for pt in pattern_groups:
+        if len(pt) in REGISTRATION_NUMBER_LENGTH:
+            registration_number = pt
+            registration_status = 'ok'
+
+    return registration_number, registration_status
+
+
+def get_birth_date_map(birth_date_groups):
+    pattern = ''
+    birth_date_map = {}
+    status = 'failed'
+
+    for pat in birth_date_groups:
+        if pat[2:5] in month_list:
+            pattern = pat
+            break
+
+    if len(pattern) == 9:
+        status = 'ok'
+        birth_date_map = get_year_month_day(pattern)
+
+    return birth_date_map, status
+
+
+def get_year_month_day(pattern):
+    birth_day_map = {}
+
+    birth_day_map['day'] = pattern[:2]
+    birth_day_map['month'] = pattern[2:5]
+    birth_day_map['year'] = pattern[5:]
+
+    return birth_day_map
+
+
+def registration_paddleocr_search(image_array):
+    registration = ''
+    nid2text = ''
+    result_paddle_ocr = ocr.ocr(image_array, cls=True)
+    for line in result_paddle_ocr:
+        nid2text = nid2text + line[1][0].lower().replace(' ', '')
+    registration_pattern_groups = registration_pattern.findall(nid2text)
+
+    if registration_pattern_groups:
+        for pt in registration_pattern_groups:
+            if len(pt) in REGISTRATION_NUMBER_LENGTH:
+                registration = pt
+
+    return registration
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -74,77 +150,44 @@ class NID2TextAPI(APIView):
             instance = serializer.save()
             image_path = instance.image.path
             obj = Image.open(image_path).convert('L')
-            arr = np.array(obj)
+            image_array = np.array(obj)
 
             try:
-                nid2text_easy_ocr = ''
-                nid2text_paddleocr = ''
+                nid2text = ''
 
-                # result_paddleocr = ocr.ocr(arr, cls=True)
-                # for line in result_paddleocr:
-                #     nid2text_paddleocr = nid2text_paddleocr + line[1][
-                #         0
-                #     ].lower().replace(' ', '')
+                result_easy_ocr = reader.readtext(image_array)
 
-                result_easy_ocr = reader.readtext(arr)
                 for line in result_easy_ocr:
-                    nid2text_easy_ocr = nid2text_easy_ocr + line[1].lower().replace(
-                        ' ', ''
-                    )
+                    nid2text = nid2text + line[1].lower().replace(' ', '')
 
-                # response['data']['nid_to_text'] = nid2text
-                response['data']['nid_to_text_paddle'] = nid2text_paddleocr
-                response['data']['nid_to_text_easy'] = nid2text_easy_ocr
+                response['data']['nid_to_text'] = nid2text
 
-                # registration_pattern_groups = registration_pattern.findall(
-                #     nid2text_paddleocr
-                # )
-                # birth_date_pattern_groups = birth_date_pattern.findall(
-                #     nid2text_paddleocr
-                # )
-                registration_pattern_groups = registration_pattern.findall(
-                    nid2text_easy_ocr
-                )
-                birth_date_pattern_groups = birth_date_pattern.findall(
-                    nid2text_easy_ocr
-                )
+                registration_pattern_groups = registration_pattern.findall(nid2text)
+                birth_date_pattern_groups = birth_date_pattern.findall(nid2text)
 
-                if registration_pattern_groups:
-                    pattern = ''
-                    for pt in registration_pattern_groups:
-                        if len(pt) in registration_number_length:
-                            pattern = pt
+                rn, rs = get_registration_number_status(registration_pattern_groups)
 
+                if rs == 'ok':
                     response['data']['registration']['status'] = 'ok'
-                    response['data']['registration']['data'] = pattern
                 else:
                     response['data']['registration']['status'] = 'failed'
-                    response['data']['registration']['data'] = {}
+                    registration = registration_paddleocr_search(image_array)
+                    if registration:
+                        response['data']['registration']['status'] = 'ok'
+                        rn = registration
+                response['data']['registration']['data'] = rn
 
-                if birth_date_pattern_groups:
-
-                    pattern = ''
-                    for pat in birth_date_pattern_groups:
-                        if pat[2:5] in month_list:
-                            pattern = pat
-                            break
-
-                    if len(pattern) == 9:
-                        birth_day_map = {}
-
-                        birth_day_map['day'] = pattern[:2]
-                        birth_day_map['month'] = pattern[2:5]
-                        birth_day_map['year'] = pattern[5:]
-
-                        response['data']['birth_date']['status'] = 'ok'
-                        response['data']['birth_date']['data'] = birth_day_map
-                    else:
-                        response['data']['birth_date']['status'] = 'failed'
-                        response['data']['birth_date']['data'] = {}
-
+                bm, bs = get_birth_date_map(birth_date_pattern_groups)
+                if bs == 'ok':
+                    response['data']['birth_date']['status'] = 'ok'
                 else:
                     response['data']['birth_date']['status'] = 'failed'
-                    response['data']['birth_date']['data'] = {}
+                    birthdate = birth_day_paddleocr_search(image_array)
+                    if birthdate:
+                        response['data']['birth_date']['status'] = 'ok'
+                        bm = birthdate
+
+                response['data']['birth_date']['data'] = bm
 
                 response['status'] = 'ok'
 
