@@ -17,7 +17,6 @@ environ.Env.read_env(env_file)
 SECRET_KEY = env('SECRET_KEY')
 # DEBUG = True
 
-
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -70,7 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ocr_project.wsgi.application'
 
-
 # Database
 
 DATABASES = {
@@ -84,24 +82,26 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 
@@ -114,7 +114,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 
@@ -129,6 +128,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 DIGIT_RECOGNIZER_MODEL = BASE_DIR / 'digit_recognizer/trained_models'
 SINGLE_DIGIT_CANVAS_MODEL = BASE_DIR / 'single_digit_canvas/ml_models'
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 if not os.path.exists('nuraz/'):
     os.mkdir('nuraz')
+
+if not os.path.exists('roi/'):
+    os.mkdir('roi')
