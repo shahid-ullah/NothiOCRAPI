@@ -9,10 +9,12 @@
     1. Command: $ source venv/bin/activate
 3. Install packages in Virtual Environment
     1. Command: $ pip install -r requirements.txt --no-cache-dir
-4. Install Additional language ocr data
+4. Remove unnecessay packages from virtualenviroment
+    1. Command: $ pip-sync
+5. Install Additional language ocr data
     1. $ sudo apt install tesseract-ocr-ben
     2. $ sudo apt install tesseract-ocr-eng
-5. Run the web development server
+6. Run the web development server
     1. command: $ python manage.py runserver
 
 
