@@ -100,7 +100,7 @@ def get_year_month_day(pattern):
 
 
 def registration_paddleocr_search(image_array):
-    registration = ''
+    nid_number = ''
     nid2text = ''
     result_paddle_ocr = ocr.ocr(image_array, cls=True)
     for line in result_paddle_ocr:
@@ -110,9 +110,9 @@ def registration_paddleocr_search(image_array):
     if registration_pattern_groups:
         for pt in registration_pattern_groups:
             if len(pt) in REGISTRATION_NUMBER_LENGTH:
-                registration = pt
+                nid_number = pt
 
-    return registration
+    return nid_number
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -144,7 +144,7 @@ class NID2TextAPI(APIView):
         response.setdefault('status', 'ok')
         response.setdefault('data', {})
         response['data'].setdefault('birth_date', {})
-        response['data'].setdefault('registration', {})
+        response['data'].setdefault('nid_number', {})
 
         if serializer.is_valid():
             instance = serializer.save()
@@ -162,20 +162,23 @@ class NID2TextAPI(APIView):
 
                 response['data']['nid_to_text'] = nid2text
 
-                registration_pattern_groups = registration_pattern.findall(nid2text)
-                birth_date_pattern_groups = birth_date_pattern.findall(nid2text)
+                registration_pattern_groups = registration_pattern.findall(
+                    nid2text)
+                birth_date_pattern_groups = birth_date_pattern.findall(
+                    nid2text)
 
-                rn, rs = get_registration_number_status(registration_pattern_groups)
+                rn, rs = get_registration_number_status(
+                    registration_pattern_groups)
 
                 if rs == 'ok':
-                    response['data']['registration']['status'] = 'ok'
+                    response['data']['nid_number']['status'] = 'ok'
                 else:
-                    response['data']['registration']['status'] = 'failed'
-                    registration = registration_paddleocr_search(image_array)
-                    if registration:
-                        response['data']['registration']['status'] = 'ok'
-                        rn = registration
-                response['data']['registration']['data'] = rn
+                    response['data']['nid_number']['status'] = 'failed'
+                    nid_number = registration_paddleocr_search(image_array)
+                    if nid_number:
+                        response['data']['nid_number']['status'] = 'ok'
+                        rn = nid_number
+                response['data']['nid_number']['data'] = rn
 
                 bm, bs = get_birth_date_map(birth_date_pattern_groups)
                 if bs == 'ok':
