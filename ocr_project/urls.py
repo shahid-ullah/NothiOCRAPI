@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import include, path  # new
 
 urlpatterns = [
-    path('admin12djfdj@#$%/', admin.site.urls),
+    path('admin12djfdj@/', admin.site.urls),
     path('apiImageToText/', include('reading_app.urls')),
     path('apiNurazDigitCanvas/', include('single_digit_canvas.urls')),
     path('apiHCR/', include('digit_recognizer.urls')),

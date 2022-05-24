@@ -20,7 +20,7 @@ registration_pattern = re.compile(r'\d{10,}')
 birth_date_pattern = re.compile(r'\d\d\D\D\D\d\d\d\d')
 
 paddle_ocr = PaddleOCR(use_angle_cls=True, lang='en')
-easyocr = easyocr.Reader(['en'])
+easyocr_reader = easyocr.Reader(['en'])
 month_list = [
     'jan',
     'feb',
@@ -129,16 +129,16 @@ class NID2TextAPI(APIView):
 
                 response['data']['nid_to_text_pocr'] = nid2text
 
-                registration_pattern_groups = registration_pattern.findall(
-                    nid2text)
-                birth_date_pattern_groups = birth_date_pattern.findall(
-                    nid2text)
+                registration_pattern_groups = registration_pattern.findall(nid2text)
+                birth_date_pattern_groups = birth_date_pattern.findall(nid2text)
 
                 nid_number, nid_response = get_registration_number_status(
-                    registration_pattern_groups)
+                    registration_pattern_groups
+                )
 
                 birth_day_map, birth_day_response = get_birth_date_map(
-                    birth_date_pattern_groups)
+                    birth_date_pattern_groups
+                )
 
                 response['data']['nid_number']['status'] = nid_response
                 response['data']['nid_number']['data'] = nid_number
@@ -149,31 +149,29 @@ class NID2TextAPI(APIView):
                 # Ocr with Easy ocr
                 nid2text = ''
                 if birth_day_response != 'ok':
-                    result_easy_ocr = easyocr.readtext(image_array)
+                    result_easy_ocr = easyocr_reader.readtext(image_array)
                     for line in result_easy_ocr:
                         nid2text = nid2text + line[1].lower().replace(' ', '')
 
-                    birth_date_pattern_groups = birth_date_pattern.findall(
-                        nid2text)
+                    birth_date_pattern_groups = birth_date_pattern.findall(nid2text)
 
                     birth_day_map, birth_day_response = get_birth_date_map(
-                        birth_date_pattern_groups)
-                    response['data']['birth_date'][
-                        'status'] = birth_day_response
+                        birth_date_pattern_groups
+                    )
+                    response['data']['birth_date']['status'] = birth_day_response
                     response['data']['birth_date']['data'] = birth_day_map
                     response['data']['nid_to_text_eocr'] = nid2text
 
                 if nid_response != 'ok':
                     if nid2text == '':
-                        result_easy_ocr = easyocr.readtext(image_array)
+                        result_easy_ocr = easyocr_reader.readtext(image_array)
                         for line in result_easy_ocr:
-                            nid2text = nid2text + line[1].lower().replace(
-                                ' ', '')
+                            nid2text = nid2text + line[1].lower().replace(' ', '')
 
-                    registration_pattern_groups = registration_pattern.findall(
-                        nid2text)
+                    registration_pattern_groups = registration_pattern.findall(nid2text)
                     nid_number, nid_response = get_registration_number_status(
-                        registration_pattern_groups)
+                        registration_pattern_groups
+                    )
                     response['data']['nid_number']['status'] = nid_response
                     response['data']['nid_number']['data'] = nid_number
                     response['data']['nid_to_text_eocr'] = nid2text

@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     # local apps
-    'reading_app',
+    'reading_app.apps.ReadingAppConfig',
     'digit_recognizer.apps.DigitRecognizerConfig',
     'single_digit_canvas.apps.SingleDigitCanvasConfig',
     'nid2text.apps.Nid2TextConfig',
