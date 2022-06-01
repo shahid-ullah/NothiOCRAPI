@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'digit_recognizer.apps.DigitRecognizerConfig',
     'single_digit_canvas.apps.SingleDigitCanvasConfig',
     'nid2text.apps.Nid2TextConfig',
+    'faceapp.apps.FaceappConfig',
 ]
 
 MIDDLEWARE = [
