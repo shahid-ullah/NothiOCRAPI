@@ -9,6 +9,7 @@ urlpatterns = [
     path('apiImageToText/', include('reading_app.urls')),
     path('apiNurazDigitCanvas/', include('single_digit_canvas.urls')),
     path('apiHCR/', include('digit_recognizer.urls')),
+    path('face/', include('faceapp.urls')),
     path('', include('nid2text.urls')),
 ]
 if settings.DEBUG:  # new
