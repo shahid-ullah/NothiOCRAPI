@@ -19,6 +19,8 @@
 - **Install Additional language ocr data**
   - `$ sudo apt install tesseract-ocr-ben`
   - `$ sudo apt install tesseract-ocr-eng`
+- **Collect static files**
+  - `$ python manage.py collectstatic`
 - **start web development server**.
   - `$ python manage.py runserver`
 
