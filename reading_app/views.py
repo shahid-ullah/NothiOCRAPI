@@ -2,6 +2,7 @@
 import os
 import re
 
+import face_recognition
 import pytesseract as tess
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render
@@ -204,23 +205,19 @@ class OCRAPIView(APIView):
         response = {}
 
         if serializer.is_valid():
-            instance = serializer.save()
             try:
-                image_path = instance.image.path
-                image_object = Image.open(image_path)
-                text = tess.image_to_string(image_object, instance.language)
-                response['text'] = str(text)
-                instance.text = str(text)
-                instance.save()
+                image = serializer.validated_data['image']
+                image_obj = face_recognition.load_image_file(image)
+                lang = serializer.validated_data.get('language', 'ben+eng')
+                text = tess.image_to_string(image_obj, lang=lang)
+                response['text'] = text
+
+                return Response(response, status=status.HTTP_200_OK)
+
             except Exception as e:
                 response['error'] = str(e)
-                instance.text = str(e)
-                instance.save()
-                return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(response, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class I2TNIDAPI(APIView):
